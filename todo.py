@@ -16,7 +16,32 @@ class Task:
 
 
 
-task = Task("Купить хлеб", "Зайти в магазин и купить хлеб", "средний")
-print(task)  # тут статус должен быть False
-task.mark_done()
-print(task)  # а тут уже True
+class TaskManager:
+    def __init__(self):
+        self.tasks = []
+
+    def __str__(self):
+        if not self.tasks:
+            return "Нет никаких задач."
+
+        tasks = ''
+        for i, task in enumerate(self.tasks, 1):
+            tasks += f"Задача {i}:\n{task}\n"
+
+        return f"Вот все ваши задачи:\n {tasks}"
+
+    def add_task(self, task):
+        self.tasks.append(task)
+
+
+
+task = Task("Прогулка на велике", "Прогулка на велике вдоль набережной", "Средний")
+task1 = Task("Занятия спортом", "Поход в тренажерный зал", "Высокий")
+
+
+manager = TaskManager()
+
+manager.add_task(task)
+manager.add_task(task1)
+
+print(manager)
