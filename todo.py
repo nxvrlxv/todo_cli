@@ -1,3 +1,5 @@
+import json
+
 class Task:
     def __init__(self, title, description, priority):
         self.title = title
@@ -13,6 +15,12 @@ class Task:
 
     def mark_done(self):
         self.done = True
+
+    def to_dict(self):
+        return {"title": self.title,
+                "description": self.description,
+                "priority": self.priority,
+                "status": self.done}
 
 
 
@@ -42,27 +50,42 @@ class TaskManager:
         self.tasks.pop(task_index-1)
         print(f"Успешно удалена задача {task_index}!")
 
+
+    def save_to_file(self, filename):
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump([t.to_dict() for t in self.tasks], f, ensure_ascii=False, indent=4)
+
 running = True
 manager = TaskManager()
 
-while running:
+
+
+
+def display_show_menu():
     print(f"Добро пожаловать в меню, выберите действие:\n"
           f"1. Добавить задачу\n"
           f"2. Показать все задачи\n"
           f"3. Отметить задачу выполненной\n"
           f"4. Удалить задачу\n"
-          f"5. Выйти из приложения")
+          f"5. Выйти из приложения\n"
+          f"6. Сохранить в файл")
     number = input()
+    return number
+
+
+while running:
+    number = display_show_menu()
     if number == '1':
         title = input('Введите заголовок задачи')
         description = input('Введите описание задачи')
         priority = input('Введите приоритет задачи')
         task = Task(title, description, priority)
         manager.add_task(task)
+
         input('Нажмите Enter чтобы выйти в меню...')
         continue
     if number == '2':
-        print(manager.tasks)
+        print(manager)
         input('Нажмите Enter чтобы выйти в меню...')
         continue
     if number == '3':
@@ -72,9 +95,12 @@ while running:
             continue
         else:
             print('Выберите задачу (номер):')
-            print(manager.tasks)
-            number_of_task = int(input())
-            manager.tasks[number_of_task-1].mark_done()
+            print(manager)
+            try:
+                number_of_task = int(input())
+                manager.tasks[number_of_task-1].mark_done()
+            except (ValueError, IndexError):1
+                print("Некорректный ввод! Попробуй снова.")
             input('Нажмите Enter чтобы выйти в меню...')
             continue
     if number == '4':
@@ -86,6 +112,11 @@ while running:
         continue
     if number == '5':
         running = False
+
+    if number == '6':
+        name_of_file = input('Введите название файла:\n')
+        manager.save_to_file(name_of_file)
+
 
 
 #taskk = Task("Прогулка на велике", "Прогулка на велике вдоль набережной", "Средний")
